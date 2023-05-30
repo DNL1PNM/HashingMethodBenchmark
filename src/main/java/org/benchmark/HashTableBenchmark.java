@@ -7,7 +7,7 @@ class HashTableBenchmark<K, V> {
         PseudoHash<K, V> hashTableSHA256 = new PseudoHash<>(sha256, 1000);
         HashFunc<K> md5 = new MD5<>();
         PseudoHash<K, V> hashTableMD5 = new PseudoHash<>(md5, 1000);
-        HashFunc<K> crc32 = new CRC32<>();
+        HashFunc<K> crc32 = new CustomCRC32<>();
         PseudoHash<K, V> hashTableCRC32 = new PseudoHash<>(crc32, 1000);
         // Генерация большого количества операций
         int numOperations = 10000;
