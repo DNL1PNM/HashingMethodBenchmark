@@ -1,23 +1,20 @@
 package org.benchmark;
+
 import java.util.LinkedList;
+import java.util.List;
 
-public class ChainingHash<K, V> {
-    private LinkedList<Entry<K, V>>[] table;
-    private HashFunc<K> hashFunction;
-    private int size;
-
+public class ChainingHash<K, V> extends HashTable<K, V> {
     public ChainingHash(HashFunc<K> hashFunction, int size) {
-        this.hashFunction = hashFunction;
-        this.size = size;
-        table = new LinkedList[size];
-        for (int i = 0; i < size; i++) {
-            table[i] = new LinkedList<>();
-        }
+        super(size);
+        setHashFunction(hashFunction);
+        createTable(size);
     }
+
+    @Override
     public void insert(K key, V value) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % size;
-        LinkedList<Entry<K, V>> chain = table[index];
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> chain = getTable().get(index);
         for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
@@ -27,10 +24,11 @@ public class ChainingHash<K, V> {
         chain.add(new Entry<>(key, value));
     }
 
+    @Override
     public void remove(K key) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % size;
-        LinkedList<Entry<K, V>> chain = table[index];
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> chain = getTable().get(index);
         for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
                 chain.remove(entry);
@@ -38,37 +36,41 @@ public class ChainingHash<K, V> {
             }
         }
     }
-    public V search(K key) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % size;
-        LinkedList<Entry<K, V>> chain = table[index];
+
+    @Override
+    public void search(K key) {
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> chain = getTable().get(index);
         for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
-                return entry.getValue();
+                return;
             }
         }
-        return null;
     }
 
-    private static class Entry<K, V> {
-        private K key;
-        private V value;
+    @Override
+    protected List<List<Entry<K, V>>> createTable(int size) {
+        List<List<Entry<K, V>>> table = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            table.add(new LinkedList<>());
+        }
+        return table;
+    }
 
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
+    @Override
+    protected void resizeTable() {
+        int newSize = getSize() * 2;
+        List<List<Entry<K, V>>> newTable = createTable(newSize);
+
+        for (List<Entry<K, V>> chain : getTable()) {
+            for (Entry<K, V> entry : chain) {
+                int newIndex = Math.abs(getHashFunction().hash(entry.getKey())) % newSize;
+                newTable.get(newIndex).add(entry);
+            }
         }
 
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
+        setTable(newTable);
+        setSize(newSize);
     }
 }

@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class СustomSHA256<K> implements HashFunc<K> {
+public class CustomSHA256<K> implements HashFunc<K> {
     public int hash(K key) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

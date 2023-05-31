@@ -3,23 +3,18 @@ package org.benchmark;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class PseudoHash<K, V> {
-    private List<List<Entry<K, V>>> table;
-    private HashFunc<K> hashFunction;
-
+public class PseudoHash<K, V> extends HashTable<K, V> {
     public PseudoHash(HashFunc<K> hashFunction, int size) {
-        this.hashFunction = hashFunction;
-        table = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            table.add(new ArrayList<>());
-        }
+        super(size);
+        setHashFunction(hashFunction);
+        createTable(size);
     }
 
+    @Override
     public void insert(K key, V value) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> bucket = getTable().get(index);
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
@@ -29,50 +24,53 @@ public class PseudoHash<K, V> {
         bucket.add(new Entry<>(key, value));
     }
 
+    @Override
     public void remove(K key) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> bucket = getTable().get(index);
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
                 bucket.remove(entry);
                 return;
             }
         }
-        // Если ключ не найден, можно выполнить обработку отсутствия ключа, например, выбросить исключение
     }
 
-    public V search(K key) {
-        int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
+    @Override
+    public void search(K key) {
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+        List<Entry<K, V>> bucket = getTable().get(index);
         for (Entry<K, V> entry : bucket) {
             if (entry.getKey().equals(key)) {
-                return entry.getValue();
+                return;
             }
         }
-        return null;
     }
 
-    private static class Entry<K, V> {
-        private K key;
-        private V value;
+    @Override
+    protected List<List<Entry<K, V>>> createTable(int size) {
+        List<List<Entry<K, V>>> table = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            table.add(new ArrayList<>());
+        }
+        return table;
+    }
 
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
+    @Override
+    protected void resizeTable() {
+        int newSize = getSize() * 2;
+        List<List<Entry<K, V>>> newTable = createTable(newSize);
+
+        for (List<Entry<K, V>> bucket : getTable()) {
+            for (Entry<K, V> entry : bucket) {
+                int newIndex = Math.abs(getHashFunction().hash(entry.getKey())) % newSize;
+                newTable.get(newIndex).add(entry);
+            }
         }
 
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
+        setTable(newTable);
+        setSize(newSize);
     }
 }

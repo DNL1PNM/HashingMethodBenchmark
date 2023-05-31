@@ -2,7 +2,7 @@ package org.benchmark;
 
 public class LinearProbingBenchmark<K, V> {
     public void run() {
-        HashFunc<K> sha256 = new СustomSHA256<>();
+        HashFunc<K> sha256 = new CustomSHA256<>();
         LinearProbingHash<K, V> hashTableSHA256 = new LinearProbingHash<>(sha256, 100);
         HashFunc<K> md5 = new CustomMD5<>();
         LinearProbingHash<K, V> hashTableMD5 = new LinearProbingHash<>(md5, 100);
@@ -59,7 +59,7 @@ public class LinearProbingBenchmark<K, V> {
         double timeMD5 = (endTimeMD5 - startTimeMD5) / 1000.0;
         double timeCRC32 = (endTimeCRC32 - startTimeCRC32) / 1000.0;
 
-        System.out.println("СustomSHA256 " + operation + " time: " + timeSHA256 + " seconds");
+        System.out.println("СustSHA256 " + operation + " time: " + timeSHA256 + " seconds");
         System.out.println("CustomMD5 " + operation + " time: " + timeMD5 + " seconds");
         System.out.println("CRC32 " + operation + " time: " + timeCRC32 + " seconds");
     }
