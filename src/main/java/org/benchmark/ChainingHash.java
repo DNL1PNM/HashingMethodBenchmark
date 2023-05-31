@@ -1,52 +1,48 @@
 package org.benchmark;
+import java.util.LinkedList;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class PseudoHash<K, V> {
-    private List<List<Entry<K, V>>> table;
+public class ChainingHash<K, V> {
+    private LinkedList<Entry<K, V>>[] table;
     private HashFunc<K> hashFunction;
+    private int size;
 
-    public PseudoHash(HashFunc<K> hashFunction, int size) {
+    public ChainingHash(HashFunc<K> hashFunction, int size) {
         this.hashFunction = hashFunction;
-        table = new ArrayList<>(size);
+        this.size = size;
+        table = new LinkedList[size];
         for (int i = 0; i < size; i++) {
-            table.add(new ArrayList<>());
+            table[i] = new LinkedList<>();
         }
     }
-
     public void insert(K key, V value) {
         int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
-        for (Entry<K, V> entry : bucket) {
+        int index = Math.abs(hash) % size;
+        LinkedList<Entry<K, V>> chain = table[index];
+        for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
                 return;
             }
         }
-        bucket.add(new Entry<>(key, value));
+        chain.add(new Entry<>(key, value));
     }
 
     public void remove(K key) {
         int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
-        for (Entry<K, V> entry : bucket) {
+        int index = Math.abs(hash) % size;
+        LinkedList<Entry<K, V>> chain = table[index];
+        for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
-                bucket.remove(entry);
+                chain.remove(entry);
                 return;
             }
         }
-        // Если ключ не найден, можно выполнить обработку отсутствия ключа, например, выбросить исключение
     }
-
     public V search(K key) {
         int hash = hashFunction.hash(key);
-        int index = Math.abs(hash) % table.size();
-        List<Entry<K, V>> bucket = table.get(index);
-        for (Entry<K, V> entry : bucket) {
+        int index = Math.abs(hash) % size;
+        LinkedList<Entry<K, V>> chain = table[index];
+        for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
             }
