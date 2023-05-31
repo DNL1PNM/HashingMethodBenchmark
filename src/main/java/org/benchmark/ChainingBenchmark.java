@@ -2,12 +2,12 @@ package org.benchmark;
 
 public class ChainingBenchmark <K,V>{
     public void run() {
-        HashFunc<String> sha256 = new CustomSHA256();
-        HashTable<String, Integer> hashTableSHA256 = new ChainingHash<>(sha256, 1000);
-        HashFunc<String> md5 = new CustomMD5();
-        HashTable<String, Integer> hashTableMD5 = new ChainingHash<>(md5, 1000);
-        HashFunc<String> crc32 = new CustomCRC32();
-        HashTable<String, Integer> hashTableCRC32 = new ChainingHash<>(crc32, 1000);
+        HashFunc<String> sha256 = new СustomSHA256<>();
+        ChainingHash<String, Integer> hashTableSHA256 = new ChainingHash<>(sha256, 1000);
+        HashFunc<String> md5 = new CustomMD5<>();
+        ChainingHash<String, Integer> hashTableMD5 = new ChainingHash<>(md5, 1000);
+        HashFunc<String> crc32 = new CustomCRC32<>();
+        ChainingHash<String, Integer> hashTableCRC32 = new ChainingHash<>(crc32, 1000);
         int numOperations = 10000;
 
         runOperationBenchmark("Insertion", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
@@ -16,9 +16,11 @@ public class ChainingBenchmark <K,V>{
     }
 
     private void runOperationBenchmark(String operation, int numOperations,
-                                       HashTable<String, Integer> hashTableSHA256,
-                                       HashTable<String, Integer> hashTableMD5,
-                                       HashTable<String, Integer> hashTableCRC32) {
+                                       ChainingHash<String, Integer> hashTableSHA256,
+                                       ChainingHash<String, Integer> hashTableMD5,
+                                       ChainingHash<String, Integer> hashTableCRC32) {
+        System.out.println("\n" + operation + " Benchmark:");
+
         long startTimeSHA256 = System.currentTimeMillis();
         long startTimeMD5 = System.currentTimeMillis();
         long startTimeCRC32 = System.currentTimeMillis();
@@ -57,7 +59,7 @@ public class ChainingBenchmark <K,V>{
         double timeMD5 = (endTimeMD5 - startTimeMD5) / 1000.0;
         double timeCRC32 = (endTimeCRC32 - startTimeCRC32) / 1000.0;
 
-        System.out.println("CustomSHA256 " + operation + " time: " + timeSHA256 + " seconds");
+        System.out.println("СustomSHA256 " + operation + " time: " + timeSHA256 + " seconds");
         System.out.println("CustomMD5 " + operation + " time: " + timeMD5 + " seconds");
         System.out.println("CRC32 " + operation + " time: " + timeCRC32 + " seconds");
     }
