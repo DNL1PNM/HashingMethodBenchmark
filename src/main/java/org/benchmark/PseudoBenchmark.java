@@ -4,7 +4,6 @@ import static java.lang.System.nanoTime;
 
 public class PseudoBenchmark<K, V> {
     public void run() {
-        System.out.println("Pseudo");
         HashFunc<K> sha256 = new CustomSHA256<>();
         HashTable<K, V> hashTableSHA256 = new PseudoHash<>(sha256, 1000);
         HashFunc<K> md5 = new CustomMD5<>();
@@ -12,9 +11,7 @@ public class PseudoBenchmark<K, V> {
         HashFunc<K> crc32 = new CustomCRC32<>();
         HashTable<K, V> hashTableCRC32 = new PseudoHash<>(crc32, 1000);
         int numOperations = 1_000;
-        runOperationBenchmark("Insertion", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
-        runOperationBenchmark("Search", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
-        runOperationBenchmark("Removal", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
+        runOperationBenchmark("Pseudo :", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
     }
 
     private void runOperationBenchmark(String operation, int numOperations, HashTable<K, V> hashTableSHA256,
@@ -114,6 +111,6 @@ public class PseudoBenchmark<K, V> {
         System.out.println("CRC32 :\n" +
                 "Insertion time: " + avgTimeCRC32Insertion + " nanoseconds\n" +
                 "Search time: " + avgTimeCRC32Search + " nanoseconds\n" +
-                "Removal time: " + avgTimeCRC32Removal + " nanoseconds");
+                "Removal time: " + avgTimeCRC32Removal + " nanoseconds\n");
     }
 }

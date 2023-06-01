@@ -1,11 +1,8 @@
 package org.benchmark;
-
-import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
 
 public class ChainingBenchmark <K,V>{
     public void run() {
-        System.out.println("Chaining");
         HashFunc<K> sha256 = new CustomSHA256<>();
         HashTable<K, V> hashTableSHA256 = new ChainingHash<>(sha256, 1000);
         HashFunc<K> md5 = new CustomMD5<>();
@@ -13,9 +10,7 @@ public class ChainingBenchmark <K,V>{
         HashFunc<K> crc32 = new CustomCRC32<>();
         HashTable<K, V> hashTableCRC32 = new ChainingHash<>(crc32, 1000);
         int numOperations = 1_000;
-        runOperationBenchmark("Insertion", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
-        runOperationBenchmark("Search", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
-        runOperationBenchmark("Removal", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
+        runOperationBenchmark("Chaining :", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
     }
 
     private void runOperationBenchmark(String operation, int numOperations, HashTable<K, V> hashTableSHA256,
