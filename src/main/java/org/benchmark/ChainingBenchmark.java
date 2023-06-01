@@ -15,7 +15,6 @@ public class ChainingBenchmark <K,V>{
 
     private void runOperationBenchmark(String operation, int numOperations, HashTable<K, V> hashTableSHA256,
                                        HashTable<K, V> hashTableMD5, HashTable<K, V> hashTableCRC32) {
-        System.out.println("\n" + operation + " Benchmark:");
 // Операция "insertion"
         long totalSHA256Insertion = 0;
         long totalMD5Insertion = 0;
