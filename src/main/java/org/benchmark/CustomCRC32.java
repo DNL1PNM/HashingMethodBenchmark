@@ -8,4 +8,7 @@ public class CustomCRC32<K> implements HashFunc<K> {
         crc32.update(bytes);
         return (int) crc32.getValue();
     }
+    public String name() {
+        return "CRC32";
+    }
 }

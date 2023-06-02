@@ -1,9 +1,7 @@
 package org.benchmark;
+import java.lang.reflect.Array;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class LinearProbingHash<K, V> extends HashTable<K,V> {
+public class LinearProbingHash<K, V> extends HashTable<K, V> {
     private static final int DEFAULT_SIZE = 1000;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
 
@@ -16,17 +14,16 @@ public class LinearProbingHash<K, V> extends HashTable<K,V> {
     }
 
     public LinearProbingHash(HashFunc<K> hashFunction, int size) {
-        super(size);
-        setHashFunction(hashFunction);
+        setHashFunction(hashFunction, size);
         this.size = size;
         this.threshold = (int) (size * DEFAULT_LOAD_FACTOR);
-        this.table = new Entry[size];
+        this.table = createEntryArray(size);
     }
 
     @Override
     public void insert(K key, V value) {
         int index = getIndex(key);
-        while (table[index] != null && table[index].isDeleted()) {
+        while (table[index] != null) {
             index = (index + 1) % size;
         }
         table[index] = new Entry<>(key, value);
@@ -39,35 +36,43 @@ public class LinearProbingHash<K, V> extends HashTable<K,V> {
     public void remove(K key) {
         int index = findIndex(key);
         if (index != -1) {
-            table[index].setDeleted(true);
+            table[index] = null;
             size--;
+            condenseTable(index);
         }
     }
 
     @Override
-    public void search(K key) {
+    public V search(K key) {
         int index = findIndex(key);
-        if (index != -1 && !table[index].isDeleted()) {
-            return;
+        if (index != -1) {
+            return table[index].getValue();
         }
+        return null;
     }
 
-    @Override
-    protected List<List<HashTable.Entry<K, V>>> createTable(int size) {
-        List<List<HashTable.Entry<K, V>>> table = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            table.add(new ArrayList<>());
-        }
-        return table;
+    private int getIndex(K key) {
+        int hash = getHashFunction().hash(key);
+        return Math.abs(hash) % size;
     }
 
-    @Override
-    protected void resizeTable() {
+    private int findIndex(K key) {
+        int index = getIndex(key);
+        while (table[index] != null) {
+            if (table[index].getKey().equals(key)) {
+                return index;
+            }
+            index = (index + 1) % size;
+        }
+        return -1;
+    }
+
+    private void resizeTable() {
         int newSize = size * 2;
-        Entry<K, V>[] newTable = new Entry[newSize];
+        Entry<K, V>[] newTable = createEntryArray(newSize);
         threshold = (int) (newSize * DEFAULT_LOAD_FACTOR);
         for (Entry<K, V> entry : table) {
-            if (entry != null && !entry.isDeleted()) {
+            if (entry != null) {
                 int index = getIndex(entry.getKey());
                 while (newTable[index] != null) {
                     index = (index + 1) % newSize;
@@ -79,35 +84,29 @@ public class LinearProbingHash<K, V> extends HashTable<K,V> {
         size = newSize;
     }
 
-    private int getIndex(K key) {
-        int hash = getHashFunction().hash(key);
-        return Math.abs(hash) % size;
+    private void condenseTable(int startIndex) {
+        int index = (startIndex + 1) % size;
+        while (table[index] != null) {
+            Entry<K, V> entry = table[index];
+            table[index] = null;
+            size--;
+            insert(entry.getKey(), entry.getValue());
+            index = (index + 1) % size;
+        }
     }
 
-    private int findIndex(K key) {
-        int index = getIndex(key);
-        int startIndex = index;
-        while (table[index] != null) {
-            if (!table[index].isDeleted() && table[index].getKey().equals(key)) {
-                return index;
-            }
-            index = (index + 1) % size;
-            if (index == startIndex) {
-                break;
-            }
-        }
-        return -1;
+    @SuppressWarnings("unchecked")
+    private Entry<K, V>[] createEntryArray(int size) {
+        return (Entry<K, V>[]) Array.newInstance(Entry.class, size);
     }
 
     private static class Entry<K, V> {
         private final K key;
         private final V value;
-        private boolean deleted;
 
         public Entry(K key, V value) {
             this.key = key;
             this.value = value;
-            this.deleted = false;
         }
 
         public K getKey() {
@@ -118,12 +117,5 @@ public class LinearProbingHash<K, V> extends HashTable<K,V> {
             return value;
         }
 
-        public boolean isDeleted() {
-            return deleted;
-        }
-
-        public void setDeleted(boolean deleted) {
-            this.deleted = deleted;
-        }
     }
 }
