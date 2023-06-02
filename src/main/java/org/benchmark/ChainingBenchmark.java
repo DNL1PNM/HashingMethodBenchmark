@@ -9,12 +9,14 @@ public class ChainingBenchmark <K,V>{
         HashTable<K, V> hashTableMD5 = new ChainingHash<>(md5, 1000);
         HashFunc<K> crc32 = new CustomCRC32<>();
         HashTable<K, V> hashTableCRC32 = new ChainingHash<>(crc32, 1000);
-        int numOperations = 1_000;
-        runOperationBenchmark("Chaining :", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
+
+        int numOperations = 1000;
+        runOperationBenchmark("Chaining :",numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
     }
 
     private void runOperationBenchmark(String operation, int numOperations, HashTable<K, V> hashTableSHA256,
                                        HashTable<K, V> hashTableMD5, HashTable<K, V> hashTableCRC32) {
+        System.out.println("Name Operation = " + operation + numOperations);
 // Операция "insertion"
         long totalSHA256Insertion = 0;
         long totalMD5Insertion = 0;
@@ -108,6 +110,6 @@ public class ChainingBenchmark <K,V>{
         System.out.println("CRC32 :\n" +
                 "Insertion time: " + avgTimeCRC32Insertion + " nanoseconds\n" +
                 "Search time: " + avgTimeCRC32Search + " nanoseconds\n" +
-                "Removal time: " + avgTimeCRC32Removal + " nanoseconds");
+                "Removal time: " + avgTimeCRC32Removal + " nanoseconds\n");
     }
 }

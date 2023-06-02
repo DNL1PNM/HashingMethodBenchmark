@@ -12,14 +12,14 @@ public class LinearProbingBenchmark<K, V> {
 
         HashFunc<K> crc32 = new CustomCRC32<>();
         HashTable<K, V> hashTableCRC32 = new LinearProbingHash<>(crc32, 1000);
-
         int numOperations = 10;
-        System.out.println("Numebers operations : " + numOperations);
+
         runOperationBenchmark("LinearProbing :", numOperations, hashTableSHA256, hashTableMD5, hashTableCRC32);
     }
 
     private void runOperationBenchmark(String operation, int numOperations, HashTable<K, V> hashTableSHA256,
                                        HashTable<K, V> hashTableMD5, HashTable<K, V> hashTableCRC32) {
+        System.out.println("Name Operation = " + operation + numOperations);
 // Операция "insertion"
         long totalSHA256Insertion = 0;
         long totalMD5Insertion = 0;
