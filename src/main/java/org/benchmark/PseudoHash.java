@@ -70,12 +70,4 @@ public class PseudoHash<K, V> extends HashTable<K, V> {
         table = newTable;
         setSize(newSize);
     }
-
-    protected List<List<Entry<K, V>>> getTable() {
-        return table;
-    }
-
-    protected void setTable(List<List<Entry<K, V>>> table) {
-        this.table = table;
-    }
 }
