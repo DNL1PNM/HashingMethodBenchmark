@@ -37,8 +37,7 @@ public class PseudoHash<K, V> extends HashTable<K, V> {
         }
     }
 
-    @Override
-    public V search(K key) {
+    @Override public V search(K key) {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
         List<Entry<K, V>> chain = table.get(index);
