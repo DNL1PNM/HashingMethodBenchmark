@@ -14,6 +14,7 @@ public class ChainingHash<K, V> extends HashTable<K, V> {
     public void insert(K key, V value) {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
+
         List<Entry<K, V>> chain = table.get(index);
         for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
@@ -28,6 +29,7 @@ public class ChainingHash<K, V> extends HashTable<K, V> {
     public void remove(K key) {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
+
         List<Entry<K, V>> chain = table.get(index);
         for (Entry<K, V> entry : chain) {
             if (entry.getKey().equals(key)) {
