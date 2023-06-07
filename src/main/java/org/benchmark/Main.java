@@ -40,15 +40,15 @@ public class Main {
 
         System.out.println("2) Method = " + LinearHash.class +
                 "(" + linearVolume +  "/" + linearBenchmark.getSize() + ")" );
-        chainingBenchmark.run(LinearSHA256,linearVolume);
-        chainingBenchmark.run(LinearMD5,linearVolume);
-        chainingBenchmark.run(LinearCRC32,linearVolume);
+        linearBenchmark.run(LinearSHA256,linearVolume);
+        linearBenchmark.run(LinearMD5,linearVolume);
+        linearBenchmark.run(LinearCRC32,linearVolume);
 
         System.out.println("3) Method = " + DoubleHash.class +
                 "(" + doubleVolume + "/" + doubleBenchmark.getSize() + ")" );
-        chainingBenchmark.run(DoubleSHA256,doubleVolume);
-        chainingBenchmark.run(DoubleMD5,doubleVolume);
-        chainingBenchmark.run(DoubleCRC32,doubleVolume);
+        doubleBenchmark.run(DoubleSHA256,doubleVolume);
+        doubleBenchmark.run(DoubleMD5,doubleVolume);
+        doubleBenchmark.run(DoubleCRC32,doubleVolume);
 
     }
 }

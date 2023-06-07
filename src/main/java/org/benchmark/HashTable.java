@@ -15,10 +15,6 @@ public abstract class HashTable<K, V> {
         return size;
     }
 
-    protected void setSize(int size) {
-        this.size = size;
-    }
-
     protected HashFunc<K> getHashFunction() {
         return hashFunction;
     }
