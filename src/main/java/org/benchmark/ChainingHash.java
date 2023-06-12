@@ -13,16 +13,23 @@ public class ChainingHash<K, V> extends HashTable<K, V> {
     @Override
     public void insert(K key, V value) {
         int hash = getHashFunction().hash(key);
+        // Вычисление хеш-кода ключа
         int index = Math.abs(hash) % getSize();
-
+        // Получение индекса ячейки хеш-таблицы
         List<Entry<K, V>> chain = table.get(index);
+        // Получение списка элементов в ячейке таблицы
         for (Entry<K, V> entry : chain) {
+        // Поиск элемента с заданным ключом в списке
             if (entry.getKey().equals(key)) {
+        // Сравнение ключа элемента с заданным ключом
                 entry.setValue(value);
+        // Обновление значения элемента
                 return;
             }
         }
         chain.add(new Entry<>(key, value));
+        // Если элемент с заданным ключом не найден,
+        // добавляем новый элемент в список
     }
 
     @Override
@@ -41,14 +48,21 @@ public class ChainingHash<K, V> extends HashTable<K, V> {
 
     public V search(K key) {
         int hash = getHashFunction().hash(key);
+        // Вычисление хеш-кода ключа
         int index = Math.abs(hash) % getSize();
+        // Получение индекса ячейки хеш-таблицы
         List<Entry<K, V>> chain = table.get(index);
+        // Получение списка элементов в ячейке таблицы
         for (Entry<K, V> entry : chain) {
+        // Поиск элемента с заданным ключом в списке
             if (entry.getKey().equals(key)) {
+        // Сравнение ключа элемента с заданным ключом
                 return entry.getValue();
+        // Возвращение значения элемента
             }
         }
         return null;
+        // Возвращение null, если элемент не найден
     }
 
     private void createTable(int size) {

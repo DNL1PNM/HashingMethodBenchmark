@@ -1,5 +1,5 @@
 package org.benchmark;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 public class LinearHash<K, V> extends HashTable<K, V> {
     private List<Entry<K, V>> table;
@@ -14,13 +14,11 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
 
-        while (table.get(index) != null) {
+        while (table.get(index) != null ) {//|| tombstone
             index = (index + 1) % getSize();
         }
-
         table.set(index, new Entry<>(key, value));
     }
-
     @Override
     public void remove(K key) {
         int hash = getHashFunction().hash(key);
@@ -36,20 +34,24 @@ public class LinearHash<K, V> extends HashTable<K, V> {
     }
     public V search(K key) {
         int hash = getHashFunction().hash(key);
+        // Вычисление хеш-кода ключа
         int index = Math.abs(hash) % getSize();
+        // Получение начального индекса в хеш-таблице
 
+        // Цикл для поиска элемента с ключом в хеш-таблице
         while (table.get(index) != null && !table.get(index).getKey().equals(key)) {
             index = (index + 1) % getSize();
+        // Переход к следующему индексу (открытая адресация)
         }
-
+        // Проверка, найден ли элемент с заданным ключом
         if (table.get(index) != null && table.get(index).getKey().equals(key)) {
-            return table.get(index).getValue();
+            return table.get(index).getValue(); // Возвращение значения элемента
         }
-
         return null;
+        // Возвращение null, если элемент не найден
     }
     private void createTable(int size) {
-        table = new LinkedList<>();
+        table = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             table.add(null);
         }

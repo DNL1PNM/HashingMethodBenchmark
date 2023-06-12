@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class CustomMD5<K> implements HashFunc<K> {
     private MessageDigest md;
-
     public CustomMD5() {
         try {
             md = MessageDigest.getInstance("MD5");
@@ -23,7 +22,5 @@ public class CustomMD5<K> implements HashFunc<K> {
         BigInteger bigInt = new BigInteger(1, digest);
         return bigInt.intValue();
     }
-    public String name() {
-        return "MD5";
-    }
+
 }

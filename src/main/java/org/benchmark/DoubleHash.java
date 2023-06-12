@@ -40,18 +40,23 @@ public class DoubleHash<K, V> extends HashTable<K, V> {
 
     public V search(K key) {
         int hash1 = getHashFunction().hash(key);
+        // Вычисление хеш-кода ключа с помощью первой хеш-функции
         int hash2 = hash2(key);
+        // Вычисление хеш-кода ключа с помощью второй хеш-функции
         int index = Math.abs(hash1) % getSize();
-
+        // Получение начального индекса в хеш-таблице
         while (table.get(index) != null && !table.get(index).getKey().equals(key)) {
+        // Цикл для поиска элемента с ключом в хеш-таблице
             index = (index + Math.abs(hash2)) % getSize();
+        // Переход к следующему индексу с использованием второй хеш-функции
         }
-
         if (table.get(index) != null && table.get(index).getKey().equals(key)) {
+        // Проверка, найден ли элемент с заданным ключом
             return table.get(index).getValue();
         }
-
+        // Возвращение значения элемента
         return null;
+        // Возвращение null, если элемент не найден
     }
 
     private int hash2(K key) {
