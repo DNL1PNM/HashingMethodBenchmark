@@ -5,6 +5,7 @@ public class LinearHash<K, V> extends HashTable<K, V> {
     private List<Entry<K, V>> table;
 
     public LinearHash(HashFunc<K> hashFunction, int size) {
+        this.size=size;
         createTable(size);
         setHashFunction(hashFunction, size);
     }
@@ -14,7 +15,7 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
 
-        while (table.get(index) != null ) {//|| tombstone
+        while (table.get(index) != null && table.get(index).getValue() != null && !table.get(index).getValue().equals(-1)) {//|| tombstone
             index = (index + 1) % getSize();
         }
         table.set(index, new Entry<>(key, value));
@@ -24,12 +25,11 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
 
-        while (table.get(index) != null && !table.get(index).getKey().equals(key)) {
+        while (table.get(index) != null && (!table.get(index).getKey().equals(key) || table.get(index).getValue().equals(-1))){
             index = (index + 1) % getSize();
         }
-
         if (table.get(index) != null && table.get(index).getKey().equals(key)) {
-            table.set(index, null);
+            table.set(index, new Entry<>(key, (V)(Integer)(-1)));
         }
     }
     public V search(K key) {
@@ -39,7 +39,7 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         // Получение начального индекса в хеш-таблице
 
         // Цикл для поиска элемента с ключом в хеш-таблице
-        while (table.get(index) != null && !table.get(index).getKey().equals(key)) {
+        while (table.get(index) != null && !table.get(index).getKey().equals(key) && !table.get(index).getValue().equals(-1)) {
             index = (index + 1) % getSize();
         // Переход к следующему индексу (открытая адресация)
         }

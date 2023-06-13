@@ -2,13 +2,10 @@ package org.benchmark;
 import static java.lang.System.nanoTime;
 
 public class Benchmark<K,V> {
-    private int tableSize = 1_007;
+
     public void run (HashTable<K,V> hashTable, int tableSize){
 
         runOperationBenchmark(tableSize,hashTable);
-    }
-    public int getSize (){
-        return  tableSize;
     }
     public void runOperationBenchmark(int numOperations, HashTable<K, V>customHashTable) {
 
@@ -19,7 +16,6 @@ public class Benchmark<K,V> {
         for (int i = 0; i < numOperations; i++) {
             K key = (K) ("key" + i);
             V value = (V) Integer.valueOf(i);
-            System.out.println(key);
             totalInsertion += measureInsert(customHashTable, key, value);
             totalSearch += measureSearch(customHashTable, key);
 

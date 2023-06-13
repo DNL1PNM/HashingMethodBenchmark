@@ -1,11 +1,12 @@
 package org.benchmark;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChainingHash<K, V> extends HashTable<K, V> {
     private List<List<Entry<K, V>>> table;
 
     public ChainingHash(HashFunc<K> hashFunction, int size) {
+        this.size=size;
         createTable(size);
         setHashFunction(hashFunction, size);
     }
@@ -66,9 +67,9 @@ public class ChainingHash<K, V> extends HashTable<K, V> {
     }
 
     private void createTable(int size) {
-        table = new LinkedList<>();
+        table = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            table.add(new LinkedList<>());
+            table.add(new ArrayList<>());
         }
     }
 }

@@ -33,19 +33,19 @@ public class Main {
         HashTable<String, Integer> DoubleCRC32 = new DoubleHash<>(crc32,doubleVolume);
 
         System.out.println("Method = " + ChainingHash.class +
-                "(" + chainingVolume + "/" + chainingBenchmark.getSize() + ")" );
+                "(" + chainingVolume + ")" );
         chainingBenchmark.run(ChainingSHA256, chainingVolume);
         chainingBenchmark.run(ChainingMD5, chainingVolume);
         chainingBenchmark.run(ChainingCRC32, chainingVolume);
 
         System.out.println("Method = " + LinearHash.class +
-                "(" + linearVolume +  "/" + linearBenchmark.getSize() + ")" );
+                "(" + linearVolume +  ")" );
         linearBenchmark.run(LinearSHA256,linearVolume);
         linearBenchmark.run(LinearMD5,linearVolume);
         linearBenchmark.run(LinearCRC32,linearVolume);
 
         System.out.println("Method = " + DoubleHash.class +
-                "(" + doubleVolume + "/" + doubleBenchmark.getSize() + ")" );
+                "(" + doubleVolume + ")" );
         doubleBenchmark.run(DoubleSHA256,doubleVolume);
         doubleBenchmark.run(DoubleMD5,doubleVolume);
         doubleBenchmark.run(DoubleCRC32,doubleVolume);

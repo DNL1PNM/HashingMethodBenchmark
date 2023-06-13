@@ -3,7 +3,7 @@ package org.benchmark;
 public abstract class HashTable<K, V> {
 
     protected HashFunc<K> hashFunction;
-    protected int size = 1;
+    protected int size ;
 
     public abstract void insert(K key, V value);
 
