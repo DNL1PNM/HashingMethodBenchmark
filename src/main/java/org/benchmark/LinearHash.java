@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class LinearHash<K, V> extends HashTable<K, V> {
     private List<Entry<K, V>> table;
-    private final Entry<K, V> TOMBSTONE = Tombstone.getInstance();
+    private final Entry<K, V> TOMBSTONE = new Entry<K, V> (null, null);
 
     public LinearHash(HashFunc<K> hashFunction, int size) {
         this.size=size;
@@ -20,18 +20,6 @@ public class LinearHash<K, V> extends HashTable<K, V> {
             index = (index + 1) % getSize();
         }
         table.set(index, new Entry<>(key, value));
-    }
-    @Override
-    public void remove(K key) {
-        int hash = getHashFunction().hash(key);
-        int index = Math.abs(hash) % getSize();
-
-        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))){
-            index = (index + 1) % getSize();
-        }
-        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
-            table.set(index, (Entry<K, V>) TOMBSTONE);
-        }
     }
     public V search(K key) {
         int hash = getHashFunction().hash(key);
@@ -50,6 +38,18 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         }
         return null;
         // Возвращение null, если элемент не найден
+    }
+    @Override
+    public void remove(K key) {
+        int hash = getHashFunction().hash(key);
+        int index = Math.abs(hash) % getSize();
+
+        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))){
+            index = (index + 1) % getSize();
+        }
+        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
+            table.set(index, (Entry<K, V>) TOMBSTONE);
+        }
     }
     private void createTable(int size) {
         table = new ArrayList<>();

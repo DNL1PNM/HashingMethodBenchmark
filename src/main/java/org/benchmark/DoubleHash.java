@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DoubleHash<K, V> extends HashTable<K, V> {
     private List<Entry<K, V>> table;
+    private final Entry<K, V> TOMBSTONE = new Entry<K, V> (null, null);
 
     public DoubleHash(HashFunc<K> hashFunction, int size) {
         this.size=size;
@@ -17,7 +18,7 @@ public class DoubleHash<K, V> extends HashTable<K, V> {
         int hash2 = hash2(key);
         int index = Math.abs(hash1) % getSize();
         int index1 = index;
-        while(table.get(index) != null && table.get(index).getValue() != null && !table.get(index).getValue().equals(-1) ) {
+        while(table.get(index) != null && !table.get(index).getKey().equals(key) && table.get(index) != TOMBSTONE ) {
             index = (index + Math.abs(hash2)) % getSize();
             if (index1 == index) {
                 index++;
@@ -26,27 +27,6 @@ public class DoubleHash<K, V> extends HashTable<K, V> {
         }
         table.set(index, new Entry<>(key, value));
     }
-
-    @Override
-    public void remove(K key) {
-        int hash1 = getHashFunction().hash(key);
-        int hash2 = hash2(key);
-        int index = Math.abs(hash1) % getSize();
-        int index1 = index;
-
-        while (table.get(index) != null && (!table.get(index).getKey().equals(key) || table.get(index).getValue().equals(-1))) {
-            index = (index + Math.abs(hash2)) % getSize();
-            if (index1 == index) {
-                index++;
-                index1++;
-            }
-        }
-
-        if (table.get(index) != null && table.get(index).getKey().equals(key)) {
-            table.set(index, new Entry<>(key, (V)(Integer)(-1)));
-        }
-    }
-
     public V search(K key) {
         int hash1 = getHashFunction().hash(key);
         // Вычисление хеш-кода ключа с помощью первой хеш-функции
@@ -56,7 +36,7 @@ public class DoubleHash<K, V> extends HashTable<K, V> {
 
         int index1 = index;
         // Получение начального индекса в хеш-таблице
-        while (table.get(index) != null && (!table.get(index).getKey().equals(key) || table.get(index).getValue().equals(-1))) {
+        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))) {
         // Цикл для поиска элемента с ключом в хеш-таблице
             index = (index + Math.abs(hash2)) % getSize();
             if (index1 == index) {
@@ -65,13 +45,32 @@ public class DoubleHash<K, V> extends HashTable<K, V> {
             }
         // Переход к следующему индексу с использованием второй хеш-функции
         }
-        if (table.get(index) != null && table.get(index).getKey().equals(key)) {
+        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
         // Проверка, найден ли элемент с заданным ключом
             return table.get(index).getValue();
         }
         // Возвращение значения элемента
         return null;
         // Возвращение null, если элемент не найден
+    }
+    @Override
+    public void remove(K key) {
+        int hash1 = getHashFunction().hash(key);
+        int hash2 = hash2(key);
+        int index = Math.abs(hash1) % getSize();
+        int index1 = index;
+
+        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))) {
+            index = (index + Math.abs(hash2)) % getSize();
+            if (index1 == index) {
+                index++;
+                index1++;
+            }
+        }
+
+        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
+            table.set(index, (Entry<K, V>) TOMBSTONE);
+        }
     }
 
     private int hash2(K key) {
