@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class LinearHash<K, V> extends HashTable<K, V> {
     private List<Entry<K, V>> table;
+    private final Entry<K, V> TOMBSTONE = Tombstone.getInstance();
 
     public LinearHash(HashFunc<K> hashFunction, int size) {
         this.size=size;
@@ -15,7 +16,7 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
 
-        while (table.get(index) != null && table.get(index).getValue() != null && !table.get(index).getValue().equals(-1)) {//|| tombstone
+        while (table.get(index) != null && !table.get(index).getKey().equals(key) && table.get(index) != TOMBSTONE) {//|| tombstone
             index = (index + 1) % getSize();
         }
         table.set(index, new Entry<>(key, value));
@@ -25,11 +26,11 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         int hash = getHashFunction().hash(key);
         int index = Math.abs(hash) % getSize();
 
-        while (table.get(index) != null && (!table.get(index).getKey().equals(key) || table.get(index).getValue().equals(-1))){
+        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))){
             index = (index + 1) % getSize();
         }
-        if (table.get(index) != null && table.get(index).getKey().equals(key)) {
-            table.set(index, new Entry<>(key, (V)(Integer)(-1)));
+        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
+            table.set(index, (Entry<K, V>) TOMBSTONE);
         }
     }
     public V search(K key) {
@@ -39,12 +40,12 @@ public class LinearHash<K, V> extends HashTable<K, V> {
         // Получение начального индекса в хеш-таблице
 
         // Цикл для поиска элемента с ключом в хеш-таблице
-        while (table.get(index) != null && !table.get(index).getKey().equals(key) && !table.get(index).getValue().equals(-1)) {
+        while (table.get(index) != null && (table.get(index) == TOMBSTONE || !table.get(index).getKey().equals(key))) {
             index = (index + 1) % getSize();
         // Переход к следующему индексу (открытая адресация)
         }
         // Проверка, найден ли элемент с заданным ключом
-        if (table.get(index) != null && table.get(index).getKey().equals(key)) {
+        if (table.get(index) != null && table.get(index).getKey() != null && table.get(index).getKey().equals(key)) {
             return table.get(index).getValue(); // Возвращение значения элемента
         }
         return null;
